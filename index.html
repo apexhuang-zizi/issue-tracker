@@ -64,7 +64,22 @@ select{width:100%;padding:4px;border:1px solid var(--border);border-radius:4px;f
 .loading-overlay.active{display:flex}
 .loading-box{background:#fff;padding:30px 50px;border-radius:12px;text-align:center}
 .loading-box h3{color:#333;margin-bottom:10px}
-@media(max-width:768px){.header{flex-direction:column;text-align:center}.header-info{grid-template-columns:1fr 1fr}.product-images{grid-column:span 2}}
+/* 手机端适配 */
+@media(max-width:768px){
+.container{padding:10px}
+.header{flex-direction:column;text-align:center;padding:15px}
+.header h1{font-size:1.2rem}
+.header-info{grid-template-columns:1fr;gap:8px;padding:12px}
+.header-info .info-field:first-child{grid-column:1}
+.header-info .product-images{grid-column:1}
+.table-wrapper{font-size:.75rem}
+th,td{padding:4px 2px!important;font-size:.65rem}
+textarea{font-size:.7rem;min-height:24px}
+select{font-size:.65rem;padding:2px}
+.image-thumb,.add-img-btn,.product-thumb{width:50px;height:50px}
+.image-preview{min-height:60px}
+.btn{padding:8px 12px;font-size:.8rem}
+}
 </style>
 </head>
 <body>
@@ -141,9 +156,17 @@ var CATEGORIES = [
     {cn:'不明原因', vn:'Nguyen nhan khong ro'}
 ];
 
+// 获取本地日期字符串（避免UTC时区问题）
+function getLocalDate() {
+    var now = new Date();
+    return now.getFullYear() + '-' + 
+           String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+           String(now.getDate()).padStart(2, '0');
+}
+
 function getFileName(suffix) {
     var project = document.getElementById('hProject').value.trim() || 'KhongCoDuAn';
-    var date = new Date().toISOString().split('T')[0];
+    var date = getLocalDate();
     project = project.replace(/[\\/:*?"<>|]/g, '_');
     return '问题追踪表-' + project + '-' + date + suffix;
 }
@@ -170,11 +193,11 @@ function translateText(text, fromLang, toLang, callback) {
 }
 
 function init() {
-    var today = new Date().toISOString().split('T')[0];
+    var today = getLocalDate();
     try { records = JSON.parse(localStorage.getItem('issues10') || '[]'); } catch(e) { records = []; }
     try { header = JSON.parse(localStorage.getItem('issueHeader10') || '{}'); } catch(e) { header = {}; }
     try { productImgs = JSON.parse(localStorage.getItem('productImgs10') || '[]'); } catch(e) { productImgs = []; }
-    // 始终使用今天日期
+    // 始终使用今天日期（本地时间）
     document.getElementById('hDate').value = today;
     document.getElementById('hRecorder').value = header.recorder || '';
     document.getElementById('hProject').value = header.project || '';
@@ -364,7 +387,7 @@ function viewImg(src) {
 
 document.getElementById('saveImgBtn').addEventListener('click', function() {
     if (!currentViewerImg) return;
-    var timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0];
+    var timestamp = getLocalDate();
     var filename = 'Anh-' + timestamp + '.png';
     var a = document.createElement('a');
     a.href = currentViewerImg;
@@ -385,7 +408,7 @@ document.getElementById('saveBtn').addEventListener('click', function() {
 function downloadHTMLBackup() {
     var filename = getFileName('.html');
     var project = document.getElementById('hProject').value.trim() || 'KhongCoDuAn';
-    var date = document.getElementById('hDate').value || new Date().toISOString().split('T')[0];
+    var date = document.getElementById('hDate').value || getLocalDate();
     var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>问题追踪表 - ' + escHtml(project) + '</title>';
     html += '<style>body{font-family:Arial;padding:30px;max-width:1200px;margin:0 auto}h1{text-align:center;border-bottom:2px solid #333}table{width:100%;border-collapse:collapse;margin:20px 0}th,td{border:1px solid #333;padding:10px;text-align:left}th{background:#f0f9ff}h2{margin-top:20px}</style>';
     html += '</head><body><h1>问题追踪表 / Issue Tracker</h1>';
@@ -430,9 +453,8 @@ document.getElementById('pdfBtn').addEventListener('click', function() {
     loadingOverlay.classList.add('active');
     
     var project = document.getElementById('hProject').value.trim() || 'KhongCoDuAn';
-    var date = document.getElementById('hDate').value || new Date().toISOString().split('T')[0];
+    var date = document.getElementById('hDate').value || getLocalDate();
     
-    // 创建临时div用于渲染
     var pdfContent = document.createElement('div');
     pdfContent.style.cssText = 'position:fixed;left:-9999px;top:0;width:1100px;padding:40px;background:#fff;font-family:Arial,sans-serif;';
     document.body.appendChild(pdfContent);
