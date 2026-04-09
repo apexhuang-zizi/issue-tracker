@@ -199,7 +199,7 @@ function init() {
     try { productImgs = JSON.parse(localStorage.getItem('productImgs10') || '[]'); } catch(e) { productImgs = []; }
     // 始终使用今天日期（本地时间）
     document.getElementById('hDate').value = today;
-    document.getElementById('hRecorder').value = header.recorder || '';
+    document.getElementById('hRecorder').value = header.recorder || 'Apex';
     document.getElementById('hProject').value = header.project || '';
     document.getElementById('hTicket').value = header.ticket || '';
     // 保存当前日期到header
