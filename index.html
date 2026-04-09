@@ -1,50 +1,44 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>问题追踪表 - Bảng theo dõi vấn đề</title>
+<title>问题追踪表</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--primary:#2563eb;--primary-dark:#1d4ed8;--bg:#f8fafc;--surface:#fff;--border:#e2e8f0;--text:#1e293b;--text-muted:#64748b;--success:#10b981;--danger:#ef4444;--warning:#f59e0b}
+:root{--primary:#2563eb;--bg:#f8fafc;--surface:#fff;--border:#e2e8f0;--text:#1e293b;--text-muted:#64748b;--success:#10b981;--danger:#ef4444}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 .container{max-width:1400px;margin:0 auto;padding:20px}
 .header{display:flex;justify-content:space-between;align-items:center;padding:20px;background:var(--surface);border-radius:12px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.05);flex-wrap:wrap;gap:16px}
 .header h1{font-size:1.5rem;font-weight:600}
-.header p{color:var(--text-muted);font-size:.9rem}
 .header-actions{display:flex;gap:10px;flex-wrap:wrap}
-.btn{padding:10px 20px;border-radius:8px;border:none;font-size:.9rem;font-weight:500;cursor:pointer;transition:all .2s;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
-.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-dark)}
-.btn-success{background:var(--success);color:#fff}.btn-success:hover{background:#059669}
-.btn-warning{background:var(--warning);color:#fff}
+.btn{padding:10px 20px;border-radius:8px;border:none;font-size:.9rem;font-weight:500;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-success{background:var(--success);color:#fff}
 .btn-danger{background:var(--danger);color:#fff}
-.btn-outline{background:var(--surface);border:1px solid var(--border);color:var(--text)}.btn-outline:hover{background:var(--border)}
-.btn-sm{padding:6px 12px;font-size:.8rem}
+.btn-outline{background:var(--surface);border:1px solid var(--border);color:var(--text)}
+.btn-outline:hover{background:var(--border)}
 .table-wrapper{overflow-x:auto;background:var(--surface);border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
-table{width:100%;border-collapse:collapse;table-layout:fixed}
+table{width:100%;border-collapse:collapse}
 th,td{border:1px solid var(--border);padding:0;vertical-align:top}
-th{background:#f0f9ff;font-size:.75rem;font-weight:600;color:var(--text-muted);text-align:center;padding:12px 8px;text-transform:uppercase;position:sticky;top:0;z-index:10;width:100px}
-th:nth-child(2){width:35%}th:nth-child(3){width:35%}th:nth-child(4){width:20%}
+th{background:#f0f9ff;font-size:.75rem;font-weight:600;color:var(--text-muted);text-align:center;padding:12px 8px;text-transform:uppercase;position:sticky;top:0;z-index:10}
 .row-num{text-align:center;font-weight:600;color:var(--text-muted);background:#f8fafc;width:50px}
-.cell{padding:8px}
-.cn-cell,.vi-cell{margin:4px 0}
-.cn-cell textarea,.vi-cell textarea{width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:.85rem;resize:vertical;min-height:50px;transition:border-color .2s}
-.cn-cell textarea:focus,.vi-cell textarea:focus{outline:none;border-color:var(--primary)}
-.cn-cell textarea{background:#fff}
-.vi-cell textarea{background:#fffbeb;border-color:#fcd34d}
-.lang-tag{font-size:.65rem;padding:2px 6px;border-radius:3px;display:inline-block;margin-bottom:4px}
+.cell-lang{display:flex;flex-direction:column}
+.cell-lang textarea{width:100%;padding:8px;border:none;font-family:inherit;font-size:.85rem;resize:vertical;min-height:40px}
+.cell-lang .cn-cell textarea{background:#fff}
+.cell-lang .vi-cell textarea{background:#fffbeb}
+.lang-tag{font-size:.65rem;padding:2px 6px;border-radius:3px;display:inline-block;margin:4px 0 2px 8px}
 .lang-tag.cn{background:#dbeafe;color:#1e40af}
 .lang-tag.vi{background:#fef3c7;color:#92400e}
-.image-preview{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
-.image-thumb{width:45px;height:45px;object-fit:cover;border-radius:4px;border:1px solid var(--border);cursor:pointer;transition:transform .2s}
+.image-preview{display:flex;flex-wrap:wrap;gap:4px;padding:4px}
+.image-thumb{width:40px;height:40px;object-fit:cover;border-radius:4px;border:1px solid var(--border);cursor:pointer}
 .image-thumb:hover{transform:scale(1.1)}
-.add-img-btn{width:45px;height:45px;border:2px dashed var(--border);border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--text-muted);transition:all .2s;background:var(--surface)}
-.add-img-btn:hover{border-color:var(--primary);color:var(--primary);background:#f0f9ff}
-.delete-row{text-align:center;padding:8px}
-.delete-row button{background:none;border:none;color:var(--danger);cursor:pointer;font-size:1rem;padding:8px;border-radius:4px}
-.delete-row button:hover{background:#fef2f2}
-.header-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;padding:16px;background:var(--surface);border-radius:12px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.add-img-btn{width:40px;height:40px;border:2px dashed var(--border);border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--text-muted);background:var(--surface)}
+.add-img-btn:hover{border-color:var(--primary);color:var(--primary)}
+.delete-btn{background:none;border:none;color:var(--danger);cursor:pointer;font-size:1rem;padding:8px;border-radius:4px}
+.delete-btn:hover{background:#fef2f2}
+.header-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;padding:16px;background:var(--surface);border-radius:12px;margin-bottom:20px}
 .info-field{display:flex;flex-direction:column;gap:4px}
 .info-field label{font-size:.7rem;font-weight:500;color:var(--text-muted);text-transform:uppercase}
 .info-field input{padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:.9rem;font-family:inherit}
@@ -55,25 +49,25 @@ th:nth-child(2){width:35%}th:nth-child(3){width:35%}th:nth-child(4){width:20%}
 .image-viewer img{max-width:90%;max-height:90%}
 .image-viewer .close-btn{position:absolute;top:20px;right:20px;width:40px;height:40px;border-radius:50%;background:#fff;border:none;cursor:pointer;font-size:20px}
 .empty-row{text-align:center;padding:40px;color:var(--text-muted);background:#fff}
-@media(max-width:768px){.header{flex-direction:column;text-align:center}.header-info{grid-template-columns:1fr}.action-bar{justify-content:center}}
+@media(max-width:768px){.header{flex-direction:column;text-align:center}.header-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="container">
 <div class="header">
-<div><h1>问题追踪表</h1><p>Bảng theo dõi vấn đề / 中文 - Tiếng Việt</p></div>
+<div><h1>问题追踪表</h1><p style="color:var(--text-muted)">Bảng theo dõi vấn đề / 中文 - Tiếng Việt</p></div>
 <div class="header-actions">
-<button class="btn btn-outline" onclick="saveNow()">💾 保存</button>
-<button class="btn btn-success" onclick="exportExcel()">📊 Excel</button>
-<button class="btn btn-danger" onclick="exportPDF()">📄 PDF</button>
+<button class="btn btn-outline" id="saveBtn">💾 保存</button>
+<button class="btn btn-success" id="excelBtn">📊 Excel</button>
+<button class="btn btn-danger" id="pdfBtn">📄 PDF</button>
 </div>
 </div>
 
-<div class="header-info">
-<div class="info-field"><label>日期 / Ngày</label><input type="date" id="headerDate" onchange="saveHeader()"></div>
-<div class="info-field"><label>记录人 / Người ghi</label><input type="text" id="headerRecorder" placeholder="输入中文或越南文" oninput="saveHeader()"></div>
-<div class="info-field"><label>项目号 / Mã dự án</label><input type="text" id="headerProject" placeholder="输入中文或越南文" onchange="saveHeader()"></div>
-<div class="info-field"><label>工单号 / Mã công việc</label><input type="text" id="headerTicket" placeholder="输入中文或越南文" onchange="saveHeader()"></div>
+<div class="header-row">
+<div class="info-field"><label>日期 / Ngày</label><input type="date" id="hDate"></div>
+<div class="info-field"><label>记录人 / Người ghi</label><input type="text" id="hRecorder" placeholder="输入"></div>
+<div class="info-field"><label>项目号 / Mã dự án</label><input type="text" id="hProject" placeholder="输入"></div>
+<div class="info-field"><label>工单号 / Mã công việc</label><input type="text" id="hTicket" placeholder="输入"></div>
 </div>
 
 <div class="table-wrapper">
@@ -83,8 +77,8 @@ th:nth-child(2){width:35%}th:nth-child(3){width:35%}th:nth-child(4){width:20%}
 <th class="row-num">#</th>
 <th>问题描述 / Mô tả vấn đề</th>
 <th>解决方法 / Giải pháp</th>
-<th>图片 / Hình ảnh</th>
-<th>删除</th>
+<th>图片</th>
+<th></th>
 </tr>
 </thead>
 <tbody id="tableBody"></tbody>
@@ -92,7 +86,7 @@ th:nth-child(2){width:35%}th:nth-child(3){width:35%}th:nth-child(4){width:20%}
 </div>
 
 <div class="action-bar">
-<button class="btn btn-primary" onclick="addRow()">+ 新增一行 / Thêm dòng mới</button>
+<button class="btn btn-primary" id="addRowBtn">+ 新增一行</button>
 </div>
 </div>
 
@@ -100,138 +94,151 @@ th:nth-child(2){width:35%}th:nth-child(3){width:35%}th:nth-child(4){width:20%}
 <button class="close-btn" onclick="closeViewer()">X</button>
 <img id="viewerImage" src="">
 </div>
-<div style="display:none"><input type="file" id="hiddenImageInput" accept="image/*" multiple onchange="handleImageUpload(event)"></div>
+<div style="display:none"><input type="file" id="imgInput" accept="image/*" multiple onchange="handleImgUpload(event)"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-const dict={'记录人':'Người ghi','Người ghi':'记录人','日期':'Ngày','Ngày':'日期','项目号':'Mã dự án','Mã dự án':'项目号','工单号':'Mã công việc','Mã công việc':'工单号','问题':'Vấn đề','Vấn đề':'问题','描述':'Mô tả','Mô tả':'描述','无法':'Không thể','Không thể':'无法','连接':'Kết nối','Kết nối':'连接','服务器':'Máy chủ','Máy chủ':'服务器','错误':'Lỗi','Lỗi':'错误','成功':'Thành công','Thành công':'成功','失败':'Thất bại','Thất bại':'失败','处理':'Xử lý','Xử lý':'处理','完成':'Hoàn thành','Hoàn thành':'完成','已解决':'Đã giải quyết','Đã giải quyết':'已解决','待处理':'Chờ xử lý','Chờ xử lý':'待处理','紧急':'Khẩn cấp','Khẩn cấp':'紧急','重要':'Quan trọng','Quan trọng':'重要','网络':'Mạng','Mạng':'网络','系统':'Hệ thống','Hệ thống':'系统','数据库':'Cơ sở dữ liệu','Cơ sở dữ liệu':'数据库','软件':'Phần mềm','Phần mềm':'软件','硬件':'Phần cứng','Phần cứng':'硬件','用户':'Người dùng','Người dùng':'用户','密码':'Mật khẩu','Mật khẩu':'密码','登录':'Đăng nhập','Đăng nhập':'登录','权限':'Quyền hạn','Quyền hạn':'权限','更新':'Cập nhật','Cập nhật':'更新','安装':'Cài đặt','Cài đặt':'安装','配置':'Cấu hình','Cấu hình':'配置','测试':'Kiểm tra','Kiểm tra':'测试','生产':'Sản xuất','Sản xuất':'生产','开发':'Phát triển','Phát triển':'开发','部署':'Triển khai','Triển khai':'部署','维护':'Bảo trì','Bảo trì':'维护'};
-let records=JSON.parse(localStorage.getItem('issueTrackerV3')||'[]');
-let currentRow=-1;
-let header={date:'',recorder:'',project:'',ticket:''};
+const dict={'记录人':'Người ghi','Người ghi':'记录人','日期':'Ngày','项目号':'Mã dự án','工单号':'Mã công việc','问题':'Vấn đề','描述':'Mô tả','无法连接':'Không thể kết nối','无法':'Không thể','连接':'kết nối','服务器':'Máy chủ','错误':'Lỗi','成功':'Thành công','失败':'Thất bại','处理':'Xử lý','完成':'Hoàn thành','已解决':'Đã giải quyết','待处理':'Chờ xử lý','紧急':'Khẩn cấp','重要':'Quan trọng','网络':'Mạng','系统':'Hệ thống','数据库':'Cơ sở dữ liệu','软件':'Phần mềm','硬件':'Phần cứng','用户':'Người dùng','密码':'Mật khẩu','登录':'Đăng nhập','权限':'Quyền hạn','更新':'Cập nhật','安装':'Cài đặt','配置':'Cấu hình','测试':'Kiểm tra','开发':'Phát triển','部署':'Triển khai','维护':'Bảo trì','客户':'Khách hàng','订单':'Đơn hàng','报表':'Báo cáo','文档':'Tài liệu','接口':'Giao diện','请求':'Yêu cầu','响应':'Phản hồi','超时':'Hết thời gian','重试':'Thử lại','加载':'Tải','缓存':'Bộ nhớ đệm','版本':'Phiên bản','环境':'Môi trường','构建':'Build','编译':'Biên dịch','运行':'Chạy','停止':'Dừng','启动':'Bắt đầu','重启':'Khởi động lại','监控':'Giám sát','日志':'Nhật ký','通知':'Thông báo','审核':'Kiểm duyệt','审批':'Phê duyệt','发布':'Xuất bản','回滚':'Rollback','备份':'Sao lưu','恢复':'Khôi phục','迁移':'Di chuyển','优化':'Tối ưu','修复':'Sửa chữa','新增':'Thêm mới','删除':'Xóa','修改':'Sửa đổi','查询':'Truy vấn','搜索':'Tìm kiếm','添加':'Thêm','导入':'Nhập','导出':'Xuất','下载':'Tải','上传':'Tải lên','复制':'Sao chép','移动':'Di chuyển','重命名':'Đổi tên','锁定':'Khóa','解锁':'Mở khóa','启用':'Bật','禁用':'Tắt','开启':'Bật','关闭':'Tắt'};
 
-function translate(text){
-let result=text;
-for(const[k,v]of Object.entries(dict)){result=result.split(k).join(v);}
-return result;
+let records=JSON.parse(localStorage.getItem('issues')||'[]');
+let curRow=-1;
+let header=JSON.parse(localStorage.getItem('issueHeader')||'{}');
+
+function trans(t){
+let r=t;
+for(const[k,v]of Object.entries(dict)){r=r.split(k).join(v);}
+return r;
 }
 
 function autoTrans(el){
 const tr=el.closest('tr');
 const idx=parseInt(tr.dataset.idx);
-const type=el.dataset.type;
+const tp=el.dataset.tp;
 const isCn=el.classList.contains('cn');
 if(!records[idx])return;
-if(isCn&&el.value&&!tr.querySelector('.'+type+'.vi-cell textarea').value){
-tr.querySelector('.'+type+'.vi-cell textarea').value=translate(el.value);
-records[idx][type+(isCn?'Cn':'Vi')]=el.value;
-records[idx][type+(!isCn?'Cn':'Vi')]=translate(el.value);
-}else if(!isCn&&el.value&&!tr.querySelector('.'+type+'.cn-cell textarea').value){
-tr.querySelector('.'+type+'.cn-cell textarea').value=translate(el.value);
-records[idx][type+(isCn?'Cn':'Vi')]=translate(el.value);
-records[idx][type+(!isCn?'Cn':'Vi')]=el.value;
-}else{
-records[idx][type+(isCn?'Cn':'Vi')]=el.value;
-records[idx][type+(!isCn?'Cn':'Vi')]=translate(el.value);
+if(isCn&&el.value){
+records[idx][tp+'Cn']=el.value;
+records[idx][tp+'Vi']=trans(el.value);
+const vi=tr.querySelector('.'+tp+'.vi-cell textarea');
+if(vi)vi.value=trans(el.value);
+}else if(!isCn&&el.value){
+records[idx][tp+'Vi']=el.value;
+records[idx][tp+'Cn']=trans(el.value);
+const cn=tr.querySelector('.'+tp+'.cn-cell textarea');
+if(cn)cn.value=trans(el.value);
 }
 saveData();
 }
 
-function renderTable(){
-const tbody=document.getElementById('tableBody');
-if(records.length===0){
-tbody.innerHTML='<tr><td colspan="5" class="empty-row">暂无记录，点击下方按钮新增 / Chưa có bản ghi</td></tr>';
+function render(){
+const tb=document.getElementById('tableBody');
+if(!records.length){
+tb.innerHTML='<tr><td colspan="5" class="empty-row">暂无记录，点击下方按钮新增</td></tr>';
 return;
 }
-tbody.innerHTML=records.map((r,i)=>
+tb.innerHTML=records.map((r,i)=>
 '<tr data-idx="'+i+'">'+
 '<td class="row-num">'+(i+1)+'</td>'+
-'<td class="cell">'+
-'<div class="cn-cell"><span class="lang-tag cn">中文</span><textarea rows="2" class="cn" data-type="issue" placeholder="问题描述..." oninput="autoTrans(this)">'+escapeHtml(r.issueCn||'')+'</textarea></div>'+
-'<div class="vi-cell"><span class="lang-tag vi">Tiếng Việt</span><textarea rows="2" class="vi" data-type="issue" placeholder="Mô tả..." oninput="autoTrans(this)">'+escapeHtml(r.issueVi||'')+'</textarea></div>'+
+'<td class="cell-lang">'+
+'<span class="lang-tag cn">中文</span><textarea class="cn" data-tp="issue" rows="2" placeholder="输入问题..." oninput="autoTrans(this)">'+(r.issueCn||'')+'</textarea>'+
+'<span class="lang-tag vi">越南文</span><textarea class="vi" data-tp="issue" rows="2" placeholder="Nhập vấn đề..." oninput="autoTrans(this)">'+(r.issueVi||'')+'</textarea>'+
 '</td>'+
-'<td class="cell">'+
-'<div class="cn-cell"><span class="lang-tag cn">中文</span><textarea rows="2" class="cn" data-type="sol" placeholder="解决方法..." oninput="autoTrans(this)">'+escapeHtml(r.solCn||'')+'</textarea></div>'+
-'<div class="vi-cell"><span class="lang-tag vi">Tiếng Việt</span><textarea rows="2" class="vi" data-type="sol" placeholder="Giải pháp..." oninput="autoTrans(this)">'+escapeHtml(r.solVi||'')+'</textarea></div>'+
+'<td class="cell-lang">'+
+'<span class="lang-tag cn">中文</span><textarea class="cn" data-tp="sol" rows="2" placeholder="输入解决方法..." oninput="autoTrans(this)">'+(r.solCn||'')+'</textarea>'+
+'<span class="lang-tag vi">越南文</span><textarea class="vi" data-tp="sol" rows="2" placeholder="Nhập giải pháp..." oninput="autoTrans(this)">'+(r.solVi||'')+'</textarea>'+
 '</td>'+
-'<td class="cell">'+
-'<div class="image-preview" id="imgs_'+i+'">'+
-(r.images||[]).map((img,ni)=>'<img src="'+img+'" class="image-thumb" onclick="openViewer(\''+img.replace(/'/g,"\\'")+'\')">').join('')+
-'</div>'+
-'<button class="add-img-btn" onclick="addImg('+i+')">+</button>'+
+'<td>'+
+'<div class="image-preview">'+(r.imgs||[]).map(img=>'<img src="'+img+'" class="image-thumb" onclick="viewImg(this.src)">').join('')+'</div>'+
+'<button class="add-img-btn" onclick="pickImg('+i+')">+</button>'+
 '</td>'+
-'<td class="delete-row"><button onclick="delRow('+i+')">🗑️</button></td>'+
+'<td><button class="delete-btn" onclick="delRow('+i+')">🗑️</button></td>'+
 '</tr>').join('');
 }
 
-function escapeHtml(str){if(!str)return'';return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
 function addRow(){
-records.unshift({issueCn:'',issueVi:'',solCn:'',solVi:'',images:[]});
-saveData();renderTable();
+records.unshift({issueCn:'',issueVi:'',solCn:'',solVi:'',imgs:[]});
+saveData();render();
 }
 
-function delRow(idx){if(confirm('删除此行？')){records.splice(idx,1);saveData();renderTable();}}
+function delRow(i){
+if(confirm('删除此行？')){
+records.splice(i,1);
+saveData();render();
+}
+}
 
-function addImg(idx){currentRow=idx;document.getElementById('hiddenImageInput').click();}
+function pickImg(i){
+curRow=i;
+document.getElementById('imgInput').click();
+}
 
-function handleImageUpload(e){
-if(currentRow<0||!e.target.files.length)return;
-if(!records[currentRow].images)records[currentRow].images=[];
-Array.from(e.target.files).slice(0,6-records[currentRow].images.length).forEach(f=>{
+function handleImgUpload(e){
+if(curRow<0||!e.target.files.length)return;
+if(!records[curRow].imgs)records[curRow].imgs=[];
+Array.from(e.target.files).slice(0,6-records[curRow].imgs.length).forEach(f=>{
 const reader=new FileReader();
-reader.onload=t=>{records[currentRow].images.push(t.target.result);saveData();renderTable();};
+reader.onload=t=>{records[curRow].imgs.push(t.target.result);saveData();render();};
 reader.readAsDataURL(f);
 });
 e.target.value='';
 }
 
-function openViewer(src){document.getElementById('viewerImage').src=src;document.getElementById('imageViewer').classList.add('active');}
-function closeViewer(){document.getElementById('imageViewer').classList.remove('active');}
-
-function saveHeader(){
-header.date=document.getElementById('headerDate').value;
-header.recorder=document.getElementById('headerRecorder').value;
-header.project=document.getElementById('headerProject').value;
-header.ticket=document.getElementById('headerTicket').value;
-localStorage.setItem('issueTrackerHeader3',JSON.stringify(header));
+function viewImg(src){
+document.getElementById('viewerImage').src=src;
+document.getElementById('imageViewer').classList.add('active');
+}
+function closeViewer(){
+document.getElementById('imageViewer').classList.remove('active');
 }
 
-function saveData(){localStorage.setItem('issueTrackerV3',JSON.stringify(records));saveHeader();}
-function saveNow(){saveData();alert('已保存！/ Đã lưu！');}
-
-function exportExcel(){
-if(records.length===0){alert('暂无数据！');return;}
-const h=JSON.parse(localStorage.getItem('issueTrackerHeader3')||'{}');
-const data=[['问题追踪表'],[],['日期/日期','记录人/NGười ghi','项目号/Mã dự án','工单号/Mã công việc'],[h.date,h.recorder,h.project,h.ticket],[],['序号/#','问题描述(中文)/Mô tả(Tiếng Trung)','问题描述(越南文)/Mô tả(Tiếng Việt)','解决方法(中文)/Giải pháp(Tiếng Trung)','解决方法(越南文)/Giải pháp(Tiếng Việt)','图片数量']];
-records.forEach((r,i)=>data.push([i+1,r.issueCn||'',r.issueVi||'',r.solCn||'',r.solVi||'',r.images?.length||0]));
-const wb=XLSX.utils.book_new();
-const ws=XLSX.utils.aoa_to_sheet(data);
-wb.Sheets['Sheet1']=ws;
-const wbout=XLSX.write(wb,{bookType:'xlsx',type:'array'});
-const blob=new Blob([wbout],{type:'application/octet-stream'});
-const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-a.download='问题追踪表_'+new Date().toISOString().split('T')[0]+'.xlsx';a.click();
+function saveData(){
+localStorage.setItem('issues',JSON.stringify(records));
+localStorage.setItem('issueHeader',JSON.stringify({
+date:document.getElementById('hDate').value,
+recorder:document.getElementById('hRecorder').value,
+project:document.getElementById('hProject').value,
+ticket:document.getElementById('hTicket').value
+}));
 }
 
-function exportPDF(){
-if(records.length===0){alert('暂无数据！');return;}
-const h=JSON.parse(localStorage.getItem('issueTrackerHeader3')||'{}');
-const p=window.open('','');
-p.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>问题追踪表</title><style>body{font-family:Arial,sans-serif;padding:20px}h1{text-align:center}h3{margin:12px 0 4px}p{margin:0;font-size:14px}table{width:100%;border-collapse:collapse;margin-top:12px;font-size:12px}th,td{border:1px solid #333;padding:6px;text-align:left}th{background:#eee}</style></head><body><h1>问题追踪表 / Bảng theo dõi vấn đề</h1><p><b>日期/Ngày:</b> '+h.date+' | <b>记录人/Người ghi:</b> '+h.recorder+' | <b>项目号/Mã dự án:</b> '+h.project+' | <b>工单号/Mã công việc:</b> '+h.ticket+'</p><table><thead><tr><th style="width:40px">#</th><th>问题描述(中文)</th><th>问题描述(越南文)</th><th>解决方法(中文)</th><th>解决方法(越南文)</th><th style="width:60px">图片</th></tr></thead><tbody>'+records.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+(r.issueCn||'')+'</td><td>'+(r.issueVi||'')+'</td><td>'+(r.solCn||'')+'</td><td>'+(r.solVi||'')+'</td><td style="text-align:center">'+(r.images?.length||0)+'</td></tr>').join('')+'</tbody></table><p style="margin-top:20px;font-size:10px">导出时间/Thời gian xuất: '+new Date().toLocaleString()+'</p><script>window.print();<\/script></body></html>');
-p.document.close();
-}
+document.getElementById('saveBtn').onclick=function(){
+saveData();
+alert('已保存！');
+};
 
-document.addEventListener('DOMContentLoaded',()=>{
-header=JSON.parse(localStorage.getItem('issueTrackerHeader3')||'{}');
-document.getElementById('headerDate').value=header.date||'';
-document.getElementById('headerRecorder').value=header.recorder||'';
-document.getElementById('headerProject').value=header.project||'';
-document.getElementById('headerTicket').value=header.ticket||'';
-if(!header.date)document.getElementById('headerDate').valueAsDate=new Date();
-renderTable();
+document.getElementById('addRowBtn').onclick=addRow;
+
+['hDate','hRecorder','hProject','hTicket'].forEach(id=>{
+document.getElementById(id).oninput=saveData;
 });
 
-window.addEventListener('beforeunload',saveData);
+document.getElementById('hDate').value=header.date||'';
+document.getElementById('hRecorder').value=header.recorder||'';
+document.getElementById('hProject').value=header.project||'';
+document.getElementById('hTicket').value=header.ticket||'';
+if(!header.date)document.getElementById('hDate').valueAsDate=new Date();
+
+document.getElementById('excelBtn').onclick=function(){
+if(!records.length){alert('暂无数据');return;}
+let csv='\uFEFF日期,记录人,项目号,工单号,问题(中文),问题(越南文),解决方法(中文),解决方法(越南文),图片数量\n';
+records.forEach(r=>{
+csv+='"'+header.date+'","'+header.recorder+'","'+header.project+'","'+header.ticket+'","'+(r.issueCn||'')+'","'+(r.issueVi||'')+'","'+(r.solCn||'')+'","'+(r.solVi||'')+'","'+(r.imgs?.length||0)+'"\n';
+});
+const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+const a=document.createElement('a');
+a.href=URL.createObjectURL(blob);
+a.download='问题追踪表_'+new Date().toISOString().split('T')[0]+'.csv';
+a.click();
+};
+
+document.getElementById('pdfBtn').onclick=function(){
+if(!records.length){alert('暂无数据');return;}
+const p=window.open('','');
+p.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>问题追踪表</title><style>body{font-family:Arial;padding:20px}h1{text-align:center}p{margin:8px 0;font-size:14px}table{width:100%;border-collapse:collapse;margin-top:12px;font-size:11px}th,td{border:1px solid #333;padding:6px;text-align:left}th{background:#eee}</style></head><body><h1>问题追踪表</h1><p><b>日期:</b>'+header.date+' <b>记录人:</b>'+header.recorder+' <b>项目号:</b>'+header.project+' <b>工单号:</b>'+header.ticket+'</p><table><thead><tr><th>#</th><th>问题(中文)</th><th>问题(越南文)</th><th>解决方法(中文)</th><th>解决方法(越南文)</th><th>图片</th></tr></thead><tbody>'+records.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+(r.issueCn||'')+'</td><td>'+(r.issueVi||'')+'</td><td>'+(r.solCn||'')+'</td><td>'+(r.solVi||'')+'</td><td>'+(r.imgs?.length||0)+'</td></tr>').join('')+'</tbody></table></body></html>');
+p.document.close();
+};
+
+window.onbeforeunload=saveData;
+render();
 </script>
 </body>
 </html>
