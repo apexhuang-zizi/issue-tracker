@@ -1,0 +1,169 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>问题追踪表</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root{--primary:#2563eb;--primary-dark:#1d4ed8;--bg:#f8fafc;--surface:#fff;--border:#e2e8f0;--text:#1e293b;--text-muted:#64748b;--success:#10b981;--danger:#ef4444;--warning:#f59e0b}
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+        .container{max-width:1200px;margin:0 auto;padding:20px}
+        .header{display:flex;justify-content:space-between;align-items:center;padding:20px;background:var(--surface);border-radius:12px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.05);flex-wrap:wrap;gap:16px}
+        .header h1{font-size:1.5rem;font-weight:600}
+        .header p{color:var(--text-muted);font-size:.9rem}
+        .header-actions{display:flex;gap:10px;flex-wrap:wrap}
+        .btn{padding:10px 20px;border-radius:8px;border:none;font-size:.9rem;font-weight:500;cursor:pointer;transition:all .2s;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
+        .btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-dark)}
+        .btn-success{background:var(--success);color:#fff}
+        .btn-warning{background:var(--warning);color:#fff}
+        .btn-danger{background:var(--danger);color:#fff}
+        .btn-outline{background:var(--surface);border:1px solid var(--border);color:var(--text)}
+        .btn-outline:hover{background:var(--border)}
+        .form-section{background:var(--surface);border-radius:12px;padding:24px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+        .section-title{font-size:1rem;font-weight:600;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+        .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-bottom:16px}
+        .form-group{display:flex;flex-direction:column;gap:6px}
+        .form-group label{font-size:.75rem;font-weight:500;color:var(--text-muted);text-transform:uppercase}
+        .form-group input,.form-group textarea{padding:12px;border:1px solid var(--border);border-radius:8px;font-size:.95rem;font-family:inherit;transition:border-color .2s}
+        .form-group input:focus,.form-group textarea:focus{outline:none;border-color:var(--primary)}
+        .bilingual{display:flex;flex-direction:column;gap:8px}
+        .bilingual input,.bilingual textarea{min-height:44px}
+        .bilingual textarea{min-height:80px;resize:vertical}
+        .lang-tag{font-size:.7rem;padding:2px 8px;border-radius:4px;display:inline-block;margin-bottom:4px}
+        .lang-tag.cn{background:#dbeafe;color:#1e40af}
+        .lang-tag.vi{background:#fef3c7;color:#92400e}
+        .image-upload{border:2px dashed var(--border);border-radius:12px;padding:30px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface)}
+        .image-upload:hover{border-color:var(--primary);background:#f0f9ff}
+        .image-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin-top:16px}
+        .image-item{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+        .image-item img{width:100%;height:100%;object-fit:cover;cursor:pointer}
+        .image-item .remove-btn{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;background:var(--danger);color:#fff;border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+        .records-list{background:var(--surface);border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+        .record-item{padding:20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .2s}
+        .record-item:hover{background:var(--bg)}
+        .record-item:last-child{border-bottom:none}
+        .record-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+        .record-title{font-weight:600}
+        .record-meta{display:flex;gap:16px;font-size:.85rem;color:var(--text-muted);flex-wrap:wrap;margin-bottom:8px}
+        .record-content{font-size:.9rem;color:var(--text-muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:8px}
+        .record-images{display:flex;gap:8px}
+        .record-images img{width:50px;height:50px;object-fit:cover;border-radius:6px;border:1px solid var(--border);cursor:pointer}
+        .image-viewer{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;z-index:1000;cursor:zoom-out}
+        .image-viewer.active{display:flex}
+        .image-viewer img{max-width:90%;max-height:90%;object-fit:contain}
+        .image-viewer .close-btn{position:absolute;top:20px;right:20px;width:40px;height:40px;border-radius:50%;background:#fff;border:none;cursor:pointer;font-size:20px}
+        .empty-state{text-align:center;padding:60px 20px;color:var(--text-muted)}
+        .empty-state svg{width:80px;height:80px;margin-bottom:20px;opacity:.5}
+        @media(max-width:768px){.header{flex-direction:column;text-align:center}.form-grid{grid-template-columns:1fr}.header-actions{justify-content:center}}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div><h1>问题追踪表</h1><p>Vietnamese Issue Tracker / Tiếng Việt</p></div>
+            <div class="header-actions">
+                <button class="btn btn-success" onclick="addRecord()">+ 新增记录</button>
+                <button class="btn btn-warning" onclick="exportExcel()">导出Excel</button>
+                <button class="btn btn-danger" onclick="exportPDF()">导出PDF</button>
+            </div>
+        </div>
+        <div class="form-section">
+            <h2 class="section-title">录入信息 / Nhập thông tin</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>记录人 / Người ghi</label>
+                    <div class="bilingual">
+                        <span class="lang-tag cn">中文</span>
+                        <input type="text" id="recorderCn" placeholder="输入中文名" oninput="autoTranslate('recorder')">
+                        <span class="lang-tag vi">Tiếng Việt</span>
+                        <input type="text" id="recorderVi" placeholder="Nhập tên tiếng Việt" oninput="autoTranslate('recorder')">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>日期 / Ngày</label>
+                    <input type="date" id="date">
+                </div>
+                <div class="form-group">
+                    <label>项目号 / Mã dự án</label>
+                    <div class="bilingual">
+                        <span class="lang-tag cn">中文</span>
+                        <input type="text" id="projectCn" placeholder="项目号" oninput="autoTranslate('project')">
+                        <span class="lang-tag vi">Tiếng Việt</span>
+                        <input type="text" id="projectVi" placeholder="Mã dự án" oninput="autoTranslate('project')">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>工单号 / Mã công việc</label>
+                    <div class="bilingual">
+                        <span class="lang-tag cn">中文</span>
+                        <input type="text" id="ticketCn" placeholder="工单号" oninput="autoTranslate('ticket')">
+                        <span class="lang-tag vi">Tiếng Việt</span>
+                        <input type="text" id="ticketVi" placeholder="Mã công việc" oninput="autoTranslate('ticket')">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" style="margin-top:16px">
+                <label>问题描述 / Mô tả vấn đề</label>
+                <div class="bilingual">
+                    <span class="lang-tag cn">中文</span>
+                    <textarea id="issueCn" rows="3" placeholder="详细描述问题..." oninput="autoTranslate('issue')"></textarea>
+                    <span class="lang-tag vi">Tiếng Việt</span>
+                    <textarea id="issueVi" rows="3" placeholder="Mô tả chi tiết vấn đề..." oninput="autoTranslate('issue')"></textarea>
+                </div>
+            </div>
+            <div class="form-group" style="margin-top:16px">
+                <label>解决方法 / Giải pháp</label>
+                <div class="bilingual">
+                    <span class="lang-tag cn">中文</span>
+                    <textarea id="solutionCn" rows="3" placeholder="描述解决方法..." oninput="autoTranslate('solution')"></textarea>
+                    <span class="lang-tag vi">Tiếng Việt</span>
+                    <textarea id="solutionVi" rows="3" placeholder="Mô tả giải pháp..." oninput="autoTranslate('solution')"></textarea>
+                </div>
+            </div>
+            <div class="form-group" style="margin-top:16px">
+                <label>图片 / Hình ảnh (最多6张)</label>
+                <div class="image-upload" onclick="document.getElementById('imageInput').click()">
+                    <input type="file" id="imageInput" accept="image/*" multiple style="display:none" onchange="handleImageUpload(event)">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <p style="margin-top:10px;color:var(--text-muted)">点击上传图片 / Nhấp để tải lên (Tối đa 6 hình)</p>
+                </div>
+                <div class="image-grid" id="imageGrid"></div>
+            </div>
+            <div style="margin-top:20px">
+                <button class="btn btn-primary" style="width:100%" onclick="saveRecord()">保存记录</button>
+            </div>
+        </div>
+        <div class="records-list" id="recordsList">
+            <div class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <p>暂无记录 / Chưa có bản ghi</p>
+            </div>
+        </div>
+    </div>
+    <div class="image-viewer" id="imageViewer" onclick="closeViewer()">
+        <button class="close-btn" onclick="closeViewer()">X</button>
+        <img id="viewerImage" src="" alt="">
+    </div>
+    <script>
+        let records=JSON.parse(localStorage.getItem('issueTrackerRecords')||'[]'),currentImages=[],editingIndex=-1;
+        const dict={'记录人':'Người ghi','Người ghi':'记录人','项目号':'Mã dự án','Mã dự án':'项目号','工单号':'Mã công việc','Mã công việc':'工单号','问题':'Vấn đề','Vấn đề':'问题','描述':'Mô tả','Mô tả':'描述','无法':'Không thể','Không thể':'无法','连接':'Kết nối','Kết nối':'连接','服务器':'Máy chủ','Máy chủ':'服务器','错误':'Lỗi','Lỗi':'错误','成功':'Thành công','Thành công':'成功','失败':'Thất bại','Thất bại':'失败','处理':'Xử lý','Xử lý':'处理','完成':'Hoàn thành','Hoàn thành':'完成','已解决':'Đã giải quyết','Đã giải quyết':'已解决','待处理':'Chờ xử lý','Chờ xử lý':'待处理'};
+        document.addEventListener('DOMContentLoaded',()=>{document.getElementById('date').valueAsDate=new Date();renderRecords()});
+        window.addEventListener('beforeunload',()=>localStorage.setItem('issueTrackerRecords',JSON.stringify(records)));
+        function autoTranslate(f){const c=document.getElementById(f+'Cn'),v=document.getElementById(f+'Vi');if(!c||!v)return;if(c.value&&!v.value){let r=c.value;for(const[k,v]of Object.entries(dict))r=r.split(k).join(v);v.value=r}else if(v.value&&!c.value){let r=v.value;for(const[k,val]of Object.entries(dict))r=r.split(k).join(val);c.value=r}}
+        function handleImageUpload(e){if(currentImages.length>=6){alert('最多6张！');return}Array.from(e.target.files).slice(0,6-currentImages.length).forEach(f=>{const r=new FileReader();r.onload=t=>{currentImages.push(t.target.result);renderImages()};r.readAsDataURL(f)})}
+        function renderImages(){document.getElementById('imageGrid').innerHTML=currentImages.map((i,n)=><div class="image-item"><img src="" onclick="openViewer('')"><button class="remove-btn" onclick="event.stopPropagation();currentImages.splice(,1);renderImages()">X</button></div>).join('')}
+        function openViewer(s){document.getElementById('viewerImage').src=s;document.getElementById('imageViewer').classList.add('active')}
+        function closeViewer(){document.getElementById('imageViewer').classList.remove('active')}
+        function saveRecord(){const r={recorderCn:document.getElementById('recorderCn').value,recorderVi:document.getElementById('recorderVi').value,date:document.getElementById('date').value,projectCn:document.getElementById('projectCn').value,projectVi:document.getElementById('projectVi').value,ticketCn:document.getElementById('ticketCn').value,ticketVi:document.getElementById('ticketVi').value,issueCn:document.getElementById('issueCn').value,issueVi:document.getElementById('issueVi').value,solutionCn:document.getElementById('solutionCn').value,solutionVi:document.getElementById('solutionVi').value,images:[...currentImages],updatedAt:new Date().toISOString()};if(!r.recorderCn&&!r.recorderVi){alert('请填写记录人！');return}if(editingIndex>=0){records[editingIndex]=r;editingIndex=-1}else{records.unshift(r)}localStorage.setItem('issueTrackerRecords',JSON.stringify(records));clearForm();renderRecords()}
+        function clearForm(){['recorderCn','recorderVi','projectCn','projectVi','ticketCn','ticketVi','issueCn','issueVi','solutionCn','solutionVi'].forEach(i=>document.getElementById(i).value='');document.getElementById('date').valueAsDate=new Date();currentImages=[];renderImages();editingIndex=-1}
+        function renderRecords(){const l=document.getElementById('recordsList');if(!records.length){l.innerHTML='<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg><p>暂无记录 / Chưa có bản ghi</p></div>';return}l.innerHTML=records.map((r,n)=><div class="record-item" onclick="editRecord()"><div class="record-header"><div class="record-title"></div><button class="btn btn-outline" style="padding:6px 12px;font-size:.8rem" onclick="event.stopPropagation();deleteRecord()">删除</button></div><div class="record-meta"><span>日期: </span><span>项目: </span><span>工单: </span></div><div class="record-content"><b>问题:</b> </div><div class="record-content"><b>解决:</b> </div></div>).join('')}
+        function editRecord(n){const r=records[n];['recorderCn','recorderVi','projectCn','projectVi','ticketCn','ticketVi','issueCn','issueVi','solutionCn','solutionVi'].forEach(i=>document.getElementById(i).value=r[i.replace('Cn','').replace('Vi','')+(i.endsWith('Cn')?'Cn':'Vi')]||'');document.getElementById('date').value=r.date||'';document.getElementById('recorderCn').value=r.recorderCn||'';document.getElementById('recorderVi').value=r.recorderVi||'';document.getElementById('projectCn').value=r.projectCn||'';document.getElementById('projectVi').value=r.projectVi||'';document.getElementById('ticketCn').value=r.ticketCn||'';document.getElementById('ticketVi').value=r.ticketVi||'';document.getElementById('issueCn').value=r.issueCn||'';document.getElementById('issueVi').value=r.issueVi||'';document.getElementById('solutionCn').value=r.solutionCn||'';document.getElementById('solutionVi').value=r.solutionVi||'';currentImages=r.images?[...r.images]:[];renderImages();editingIndex=n;window.scrollTo({top:0,behavior:'smooth'})}
+        function deleteRecord(n){if(confirm('确定删除？')){records.splice(n,1);localStorage.setItem('issueTrackerRecords',JSON.stringify(records));renderRecords()}}
+        function addRecord(){clearForm();window.scrollTo({top:0,behavior:'smooth'})}
+        function exportExcel(){if(!records.length){alert('暂无数据！');return}let csv='\uFEFF记录人(中文),记录人(越南文),日期,项目号(中文),项目号(越南文),工单号(中文),工单号(越南文),问题描述(中文),问题描述(越南文),解决方法(中文),解决方法(越南文)\n';records.forEach(r=>{csv+='"'+r.recorderCn+'","'+r.recorderVi+'","'+r.date+'","'+r.projectCn+'","'+r.projectVi+'","'+r.ticketCn+'","'+r.ticketVi+'","'+(r.issueCn||'').replace(/"/g,'""')+'","'+(r.issueVi||'').replace(/"/g,'""')+'","'+(r.solutionCn||'').replace(/"/g,'""')+'","'+(r.solutionVi||'').replace(/"/g,'""')+'"\n'});const b=new Blob([csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='问题追踪表_'+new Date().toISOString().split('T')[0]+'.csv';a.click()}
+        function exportPDF(){if(!records.length){alert('暂无数据！');return}const p=window.open('','');p.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>问题追踪表</title><style>body{font-family:Arial,sans-serif;padding:20px}h1{text-align:center}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{border:1px solid #ddd;padding:8px;text-align:left;font-size:12px}th{background:#f5f5f5}</style></head><body><h1>问题追踪表 / Vietnamese Issue Tracker</h1><table><thead><tr><th>记录人<br>Người ghi</th><th>日期<br>Ngày</th><th>项目号<br>Mã dự án</th><th>工单号<br>Mã công việc</th><th>问题描述<br>Mô tả</th><th>解决方法<br>Giải pháp</th></tr></thead><tbody>'+records.map(r=>'<tr><td>'+r.recorderCn+'<br>'+r.recorderVi+'</td><td>'+r.date+'</td><td>'+r.projectCn+'<br>'+r.projectVi+'</td><td>'+r.ticketCn+'<br>'+r.ticketVi+'</td><td>'+r.issueCn+'<br>'+r.issueVi+'</td><td>'+r.solutionCn+'<br>'+r.solutionVi+'</td></tr>').join('')+'</tbody></table><script>window.print();<\/script></body></html>');p.document.close()}
+    </script>
+</body>
+</html>
